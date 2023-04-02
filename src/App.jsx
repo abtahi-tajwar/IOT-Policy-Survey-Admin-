@@ -1,34 +1,30 @@
-import { useState } from 'react'
-import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
-import ReplyAllIcon from '@mui/icons-material/ReplyAll';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import Sidenav from './components/Sidenav';
-import IotLogo from './assets/iot.png';
-import { BrowserRouter as Router } from 'react-router-dom';
-import Response from './firebase/responses';
-import Scenario from './firebase/scenarios';
-import Routes from './Routes';
-
+import { useState } from "react";
+import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";
+import ReplyAllIcon from "@mui/icons-material/ReplyAll";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import Sidenav from "./components/Sidenav";
+import IotLogo from "./assets/iot.png";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import { BrowserRouter as Router } from "react-router-dom";
+import Routes from "./Routes";
+import SignIn from "./pages/SignIn";
 
 function App() {
-  const [count, setCount] = useState(0)
-  const response = new Response()
-  const scenarios = new Scenario()
-  response.get().then(res => console.log(res))
-  response.count().then(count => console.log(count))
-  scenarios.get().then(scene => console.log("Scene", scene))
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <Router>
       <div className="App">
-        <Sidenav
-          items={NavItems}
-          logoSource={IotLogo}
-        >
-          <Routes />
-        </Sidenav>
+        {isLoggedIn ? (
+          <Sidenav items={NavItems} logoSource={IotLogo}>
+            <Routes />
+          </Sidenav>
+        ) : (
+          <SignIn setIsLoggedIn={setIsLoggedIn} />
+        )}
       </div>
     </Router>
-  )
+  );
 }
 
 const NavItems = {
@@ -37,21 +33,40 @@ const NavItems = {
       name: "dashbaord",
       label: "Dashboard",
       icon: <DashboardIcon />,
-      url: "/"
+      url: "/",
     },
     {
       name: "scenarios",
       label: "Scenarios",
       icon: <PsychologyAltIcon />,
-      url: "/scenarios"
+      subItems: [
+        {
+          name: "all_scenarios",
+          label: "View All",
+          url: "/scenario/all",
+          headingLabel: "All Scenarios",
+        },
+        {
+          name: "create_scenario",
+          label: "Create New",
+          url: "/scenario/create",
+          headingLabel: "Create New Scenario",
+        },
+      ],
     },
     {
-      name: "catalog",
-      label: "Catalog",
-      icon: <ReplyAllIcon />,
-      url: '/responses'
-    }
-  ]
+      name: "candidates",
+      label: "Candidates",
+      icon: <PeopleAltIcon />,
+      url: "/candidates",
+    },
+    {
+      name: "gallery",
+      label: "Gallery",
+      icon: <CollectionsIcon />,
+      url: "/gallery",
+    },
+  ],
 };
 
-export default App
+export default App;

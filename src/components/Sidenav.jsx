@@ -555,7 +555,10 @@ export default function Sidenav({ children, items, logoSource, collapseLogoSourc
         
         <Container drawerWidth={drawerCurrentWidth}>
           <DrawerHeader />
-          {children}
+          <div className="drawer-content">
+            {children}
+          </div>
+          
         </Container>
       </Box>
     </NavWrapper>
@@ -586,6 +589,10 @@ const Container = styled.div`
   transition: width .3s ease-out;
   &::-webkit-scrollbar {
     background-color: #EFF3FC;
+  }
+  .drawer-content {
+    padding: 15px;
+    border-radius: 15px;
   }
 `;
 

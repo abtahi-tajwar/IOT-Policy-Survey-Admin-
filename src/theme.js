@@ -17,6 +17,9 @@ export const theme = createTheme({
         light: "#F8FAFC",
         disabled: "#f2f2f2"
       },
+      danger: {
+        main: "#FF6D6D",
+      },
       action: {
         danger: "#FF6D6D"
       }
