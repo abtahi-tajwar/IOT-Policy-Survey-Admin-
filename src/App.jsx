@@ -61,6 +61,12 @@ const NavItems = {
       url: "/candidates",
     },
     {
+      name: "responses",
+      label: "Responses",
+      icon: <ReplyAllIcon />,
+      url: "/responses",
+    },
+    {
       name: "gallery",
       label: "Gallery",
       icon: <CollectionsIcon />,

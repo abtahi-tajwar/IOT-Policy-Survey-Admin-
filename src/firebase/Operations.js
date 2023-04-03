@@ -79,6 +79,34 @@ export default class Operations {
       
     });
   }
+  getAll() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const querySnapshot = await getDocs(this.collectionRef);
+        const result = []
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          result.push({
+            id: doc.id,
+            data: doc.data()
+          });
+        });
+        resolve({
+          success: true,
+          response: result
+        })
+      } catch (e) {
+        reject({
+          success: false,
+          response: e
+        })
+      }
+      
+      
+    })
+    
+
+  }
   getById(id, fileDataKeys = []) {
     return new Promise(async (resolve, reject) => {
       const docRef = doc(this.db, this.collectionName, id);

@@ -40,7 +40,6 @@ const StyledTableRow = MuiStyled(TableRow)(({ theme }) => ({
  */
 /**
     columns: Array<ColumnDataType>
-    
  */
 export default function BasicTable({ columns, data, loadMore, isLastPage = true, loadMoreLoading = false }) {
 
