@@ -33,6 +33,10 @@ function AllResponses() {
         })
         populateCSVData()
     }, [])
+
+    React.useEffect(() => {
+        console.log("CSV Data", csvData)
+    }, [csvData])
     
     const populateCSVData = () => {
         response.getAll().then(res => {
@@ -67,9 +71,9 @@ function AllResponses() {
     <Wrapper>
         <Loader isLoading={loading}>
             <div className="action-buttons">
-                <Button variant="contained" color="secondary">
+                {csvData && <Button variant="contained" color="secondary">
                     <CSVLink data={csvData}>Generate CSV</CSVLink>
-                </Button>
+                </Button> }
                 <Button variant="contained" color="secondary" onClick={handleJSONFileDownload}>
                     Generate JSON
                 </Button>

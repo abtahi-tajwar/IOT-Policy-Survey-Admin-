@@ -46,6 +46,7 @@ function CreateScenario() {
         setUploadLoading(true)
         scenario.create({
             name: input.name,
+            groupId: "",
             instruction_markdown: input.instruction,
             scenario_markdown: input.scenario,
             order: parseInt(input.order),
@@ -61,7 +62,9 @@ function CreateScenario() {
                 setInput({
                     name: "",
                     scenario: null,
-                    instruction: null
+                    instruction: null,
+                    order: 0,
+                    active: true
                 })
             } else {
                 console.log(res.error)
