@@ -19,6 +19,7 @@ function AllResponses() {
 
     React.useEffect(() => {
         setLoading(true)
+        
         response.get().then(res => {
             setResponses(res.response)
             setTableData(res.response.map(item => ({
@@ -31,6 +32,7 @@ function AllResponses() {
             })))
             setLoading(false)
         })
+
         populateCSVData()
     }, [])
 

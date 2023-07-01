@@ -194,6 +194,7 @@ function AllScenarioGroups() {
         {openManage && <ManageScenarioGroup 
             open={openManage}
             setOpen={setOpenManage}
+            groupId={manageSceneGroupId}
         />}
     </>
   )

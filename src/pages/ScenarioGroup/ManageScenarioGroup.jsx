@@ -6,11 +6,13 @@ import Modal from '@mui/material/Modal';
 import Scenario from '../../firebase/scenarios';
 import ScenarioGroups from '../../firebase/scenario_groups';
 import styled from '@emotion/styled';
+import Loader from '../../components/Loader'
 
 
 function ManageScenarioGroup({ groupId, open, setOpen }) {
   const handleClose = () => setOpen(false);
   const [scenes, setScenes] = React.useState(null)
+  const [loading, setLoading] = React.useState(true)
   const [sceneGroups, setSceneGroups] = React.useState(null)
   const [sceneByGroup, setSceneByGroup] = React.useState()
   const scene = new Scenario()
@@ -30,7 +32,7 @@ function ManageScenarioGroup({ groupId, open, setOpen }) {
         const _sceneByGroup = {
             ungrouped: {
                 name: "Ungrouped",
-                id: null,
+                id: "ungrouped",
                 scenes: []
             }
         }
@@ -59,8 +61,25 @@ function ManageScenarioGroup({ groupId, open, setOpen }) {
     }
   }, [scenes, sceneGroups])
 
+  const handleSceneGroupAssign = (sceneId) => {
+    const body = {
+      groupId
+    }
+    scene.update(sceneId, body).then(res => {
+      setScenes(null)
+      setSceneGroups(null)
+      setSceneByGroup(null)
+      scene.get().then(res => {
+          setScenes(res.response)
+      })
+      scene_groups.get().then(res => {
+          setSceneGroups(res.response)
+      })
+    })
+  }
+
   React.useEffect(() => {
-    console.log("Scene by group", sceneByGroup)
+    console.log("Scene by group", sceneByGroup, scenes, sceneGroups)
   }, [sceneByGroup])
 
 
@@ -72,9 +91,45 @@ function ManageScenarioGroup({ groupId, open, setOpen }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+          <Loader isLoading={sceneByGroup ? false : true}>
             <ManageSceneGroupViewer>
-
+            <section>
+                {sceneByGroup && Object.keys(sceneByGroup).map(key => 
+                  sceneByGroup[key].id === groupId && <div className='group'>
+                    {console.log("Scene groups loading section", sceneByGroup[key].id, groupId)}
+                    <label className='group_label'>{sceneByGroup[key].name}</label>
+                    <ul className='scene_list'>
+                      {
+                        sceneByGroup[key].scenes.map(scene => 
+                          <li>
+                            <span>{scene.data.name}</span>
+                          </li>
+                        )
+                      }
+                    </ul>
+                  </div>
+                )}
+              </section>
+              <section>
+                {sceneByGroup && Object.keys(sceneByGroup).map(key => 
+                  sceneByGroup[key].id !== groupId && <div className='group'>
+                    {console.log("Scene groups loading section", sceneByGroup[key].id, groupId)}
+                    <label className='group_label'>{sceneByGroup[key].name}</label>
+                    <ul className='scene_list'>
+                      {
+                        sceneByGroup[key].scenes.map(scene => 
+                          <li>
+                            <span>{scene.data.name}</span>
+                            <Button variant='contained' size='small' onClick={() => handleSceneGroupAssign(scene.id)}>Assign</Button>
+                          </li>
+                        )
+                      }
+                    </ul>
+                  </div>
+                )}
+              </section>
             </ManageSceneGroupViewer>
+          </Loader>
           <Button variant='contained' color="secondary" onClick={handleClose}>Close</Button>
         </Box>
       </Modal>
@@ -96,8 +151,29 @@ const style = {
 
 const ManageSceneGroupViewer = styled('div')`
     width: 95%;
-    margin: 0 auto;
+    margin: 20px auto;
     height: 70vh;
+    overflow-y: scroll;
+    section {
+      .group_label {
+        font-size: 1.5rem;
+        font-weight: bold;
+        border-bottom: 0.1px solid black;
+      }
+      .scene_list {
+        list-style-type: none;
+        padding: 0;
+        li {
+          padding: 5px;
+          border-radius: 5px;
+          margin: 5px 0px;
+          box-shadow: 0px 0px 5px 0px rgba(205, 205, 205, 0.75);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      }
+    }
 `
 
 export default ManageScenarioGroup
