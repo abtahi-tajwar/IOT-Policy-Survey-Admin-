@@ -6,6 +6,7 @@ import Sidenav from "./components/Sidenav";
 import IotLogo from "./assets/iot.png";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import CollectionsIcon from "@mui/icons-material/Collections";
+import GroupWorkIcon from '@mui/icons-material/GroupWork';
 import { BrowserRouter as Router } from "react-router-dom";
 import Routes from "./Routes";
 import SignIn from "./pages/SignIn";
@@ -50,6 +51,25 @@ const NavItems = {
           name: "create_scenario",
           label: "Create New",
           url: "/scenario/create",
+          headingLabel: "Create New Scenario",
+        },
+      ],
+    },
+    {
+      name: "scenario_groups",
+      label: "Scenario Groups",
+      icon: <GroupWorkIcon />,
+      subItems: [
+        {
+          name: "all_scenario_groups",
+          label: "View All",
+          url: "/scenario_group/all",
+          headingLabel: "All Scenarios",
+        },
+        {
+          name: "create_scenario",
+          label: "Create New",
+          url: "/scenario_group/create",
           headingLabel: "Create New Scenario",
         },
       ],

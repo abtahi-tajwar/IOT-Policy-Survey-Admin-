@@ -31,7 +31,7 @@ export default class Operations {
       resolve(snapshot.data().count);
     });
   }
-  get(lim = 10, queryParams = null) {
+  get(lim = 100, queryParams = null) {
     return new Promise(async (resolve, reject) => {
       let q = null;
       let isLastPage = false;
