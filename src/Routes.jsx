@@ -10,6 +10,7 @@ import CreateScenarioGroup from './pages/ScenarioGroup/CreateScenarioGroup'
 import Candidates from './pages/Candidates'
 import CandidateResponses from './pages/Responses/CandidateResponses'
 import Gallery from './pages/Gallery/Gallery'
+import Training from './pages/Training/Training'
 
 function Routes() {
   return (
@@ -23,6 +24,7 @@ function Routes() {
         <Route path="/candidates" element={<Candidates />} />
         <Route path="/responses" element={<AllResponses />} />
         <Route path="/candidate/responses/:id" element={<CandidateResponses />} />
+        <Route path="/training" element={<Training />} />
         <Route path="/gallery" element={<Gallery />} />
     </Switch>
   )

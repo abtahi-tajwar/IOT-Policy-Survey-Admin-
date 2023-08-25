@@ -101,11 +101,7 @@ export default class Operations {
           response: e
         })
       }
-      
-      
     })
-    
-
   }
   getById(id, fileDataKeys = []) {
     return new Promise(async (resolve, reject) => {

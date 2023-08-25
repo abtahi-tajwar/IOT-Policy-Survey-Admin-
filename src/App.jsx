@@ -7,6 +7,7 @@ import IotLogo from "./assets/iot.png";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
+import SchoolIcon from '@mui/icons-material/School';
 import { BrowserRouter as Router } from "react-router-dom";
 import Routes from "./Routes";
 import SignIn from "./pages/SignIn";
@@ -85,6 +86,31 @@ const NavItems = {
       label: "Responses",
       icon: <ReplyAllIcon />,
       url: "/responses",
+    },
+    {
+      name: 'training',
+      label: "Training",
+      icon: <SchoolIcon />,
+      subItems: [
+        {
+          name: "manage_training",
+          label: "Manage Training",
+          url: "/training",
+          headingLabel: "Manage Training",
+        },
+        {
+          name: "view_lessons",
+          label: "View Lessons",
+          url: "/lessons",
+          headingLabel: "All Lessons",
+        },
+        {
+          name: "create_lesson",
+          label: "Create Lesson",
+          url: "/lessons/create",
+          headingLabel: "Create Lesson",
+        }
+      ]
     },
     {
       name: "gallery",
