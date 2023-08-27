@@ -101,13 +101,13 @@ const NavItems = {
         {
           name: "view_lessons",
           label: "View Lessons",
-          url: "/lessons",
+          url: "/lesson/all",
           headingLabel: "All Lessons",
         },
         {
           name: "create_lesson",
           label: "Create Lesson",
-          url: "/lessons/create",
+          url: "/lesson/create",
           headingLabel: "Create Lesson",
         }
       ]

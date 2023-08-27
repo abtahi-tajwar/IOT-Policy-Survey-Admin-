@@ -11,6 +11,8 @@ import Candidates from './pages/Candidates'
 import CandidateResponses from './pages/Responses/CandidateResponses'
 import Gallery from './pages/Gallery/Gallery'
 import Training from './pages/Training/Training'
+import AllLessons from './pages/Training/Lesson/AllLessons'
+import CreateAndUpdateLesson from './pages/Training/Lesson/CreateAndUpdateLesson'
 
 function Routes() {
   return (
@@ -25,6 +27,9 @@ function Routes() {
         <Route path="/responses" element={<AllResponses />} />
         <Route path="/candidate/responses/:id" element={<CandidateResponses />} />
         <Route path="/training" element={<Training />} />
+        <Route path="/lesson/all" element={<AllLessons />} />
+        <Route path="/lesson/create" element={<CreateAndUpdateLesson />} />
+        <Route path="/lesson/edit/:lessonId" element={<CreateAndUpdateLesson />} />
         <Route path="/gallery" element={<Gallery />} />
     </Switch>
   )
