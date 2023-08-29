@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { Grid } from '@mui/material';
 import TextField from '../../../components/TextField';
 import MDEditor from '@uiw/react-md-editor';
+import { Card } from '@mui/material';
 
 // CreateOrEditInstruction.propTypes = {
 //     instruction: {
@@ -34,7 +35,7 @@ function CreateOrEditInstruction({ instructions, setInstructions }) {
   )
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(Card)`
     padding: 20px;
     box-sizing: border-box;
     border-radius: 10px;

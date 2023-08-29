@@ -23,7 +23,7 @@ export default function Select({ label, options, value, setValue }) {
         onChange={handleChange}
       >
         {options.map((option, oi) => (
-            <MenuItem value={option.value ?? oi}>
+            <MenuItem value={option.value ?? oi} key={oi}>
                 {option.label ?? option}
             </MenuItem>
         ))}

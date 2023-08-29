@@ -5,6 +5,7 @@ import Lesson from '../../../firebase/Lesson'
 import CreateOrUpdateMCQ from './MCQ/CreateOrUpdateMCQ'
 import CreateOrUpdateDnD from './DnD/CreateOrUpdateDnD'
 import TabNavigator from '../../../components/TabNavigator'
+import Loader from '../../../components/Loader'
 
 function CreateAndUpdateLesson(props) {
     const lesson = new Lesson()
@@ -22,8 +23,8 @@ function CreateAndUpdateLesson(props) {
     useEffect(() => {
         if (updateMode && id) {
             setCurrentLessonLoading(true)
-            lesson.getById(id).then(res => {
-                setCurrentLesson(res.response)
+            lesson.getById(id, ['image']).then(res => {
+                setCurrentLesson(res.response.data)
                 setCurrentLessonLoading(false)
             })
         }
@@ -31,7 +32,7 @@ function CreateAndUpdateLesson(props) {
 
     useEffect(() => {
       if (currentLesson) {
-        setLessonType(currentLesson.data.type)
+        setLessonType(currentLesson.type)
       }
     }, [currentLesson])
 
@@ -44,20 +45,22 @@ function CreateAndUpdateLesson(props) {
       {
         value: "mcq",
         label: "MCQ (Multiple Choice Question)",
-        body: <CreateOrUpdateMCQ currentLesson={currentLesson} updateMode={updateMode} />
+        body: <CreateOrUpdateMCQ lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} />
       },
       {
         value: "dnd",
         label: "DND (Drag & Drop Blanks)",
-        body: <CreateOrUpdateDnD currentLesson={currentLesson} updateMode={updateMode} />
+        body: <CreateOrUpdateDnD lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} />
       }
     ]
   return <Box>
-    <TabNavigator 
-      tabs={tabs} 
-      currentTab={lessonType}
-      setCurrentTab={setLessonType}
-    />
+    <Loader isLoading={currentLessonLoading}>
+      {(!updateMode || currentLesson) && <TabNavigator 
+        tabs={tabs} 
+        currentTab={lessonType}
+        setCurrentTab={setLessonType}
+      />}
+    </Loader>
   </Box>
 }
 
