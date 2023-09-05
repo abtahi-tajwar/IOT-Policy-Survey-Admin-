@@ -87,6 +87,7 @@ function ImageCropUploader({
 
   useEffect(() => {
     console.log("Image", image);
+    if (image === "") setImgAfterCrop(image)
   }, [image]);
 
   return (

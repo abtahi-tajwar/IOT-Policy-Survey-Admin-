@@ -108,6 +108,7 @@ export default class Operations {
       const docRef = doc(this.db, this.collectionName, id);
       try {
         const docSnap = await getDoc(docRef);
+        if (!docSnap.data()) resolve({ success: true, response: null })
         const response = {
             id: docSnap.id,
             data: docSnap.data(),
@@ -284,7 +285,6 @@ export default class Operations {
     );
   }
   iterateAndDownload (data, fileDataKeys = []) {
-    console.log("Current Iterate and download data", data)
     return new Promise(async (resolve, reject) => {
       if (data instanceof Array) {
         const _newArr = []

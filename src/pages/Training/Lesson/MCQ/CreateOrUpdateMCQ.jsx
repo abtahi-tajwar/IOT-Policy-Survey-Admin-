@@ -18,6 +18,7 @@ import ConfirmationPopup from '../../../../components/ConfirmationPopup'
 import { useNavigate } from 'react-router-dom'
 
 function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMode }) {
+  console.log("Current Lesson For MCQ", currentLesson)
   const navigate = useNavigate()
   const lesson = new Lesson()
   // Update mode placeholder value
@@ -148,9 +149,6 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
         }))
       }
     }
-
-    console.log("question dnd card updated", currentLesson)
-
   }, [questionDnDCards])
 
   useEffect(() => {
@@ -235,6 +233,24 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
     }
   }
 
+  const handleDeleteSelectedQuestion = (_selectedQuestionIndex) => {
+    if (updateMode) {
+      setCurrentLesson(prevState => ({
+        ...prevState,
+        questions: prevState.questions.filter((blank,bi) => bi !== _selectedQuestionIndex)
+      }))
+      questionDnDStateUpdatedOnce.current = false
+    } else {
+      setNewLesson(prevState => ({
+        ...prevState,
+        questions: prevState.questions.filter((blank,bi) => bi !== _selectedQuestionIndex)
+      }))
+      questionDnDStateUpdatedOnce.current = false
+    }
+
+    setSelectedQuestion(null)
+  }
+
   const handleSaveNewQuestion = (newQuestion) => {
     if (updateMode) {
       setCurrentLesson(prevState => ({ ...prevState, questions: [ ...prevState.questions, newQuestion ] }) ) 
@@ -283,7 +299,6 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
         })
         navigate('/lesson/all')
       }).catch(e => {
-        console.log("Failed to Add New Lesson", e)
         setConfirmationPopup({
           show: true,
           error: true,
@@ -295,14 +310,9 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
   }
 
   useEffect(() => {
-    console.log("Current Lesson", currentLesson)
     currentLessonRef.current = currentLesson
   }, [currentLesson])
   useEffect(() => {
-    console.log("Selected question", selectedQuestion)
-  }, [selectedQuestion])
-  useEffect(() => {
-    console.log("New Lesson", newLesson)
     newLessonRef.current = newLesson
   }, [newLesson])
 
@@ -352,7 +362,6 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
               mlabel="Options"
               arr={selectedQuestion.options}
               setArr={(value) => {
-                console.log("New array values", value)
                 setSelectedQuestion(prevState => ({ ...prevState, options: value }))
               }}
             />
@@ -394,6 +403,8 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
                 aspectRatio={1.5}
               />
             </Box>
+
+            <Button variant='contained' color="error" onClick={() => handleDeleteSelectedQuestion(selectedQuestionIndex)}>Delete This Question</Button>
           </Card>
           
         </Grid> }
@@ -417,7 +428,6 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
               mlabel="Options"
               arr={newStagedQuestion.options}
               setArr={(value) => {
-                console.log("New array values", value)
                 setNewStagedQuestion(prevState => ({ ...prevState, options: value }))
               }}
             />

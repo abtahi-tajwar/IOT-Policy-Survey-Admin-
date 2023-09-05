@@ -17,13 +17,14 @@ function CreateAndUpdateLesson(props) {
     // Update mode turns on automatically by passing lesson id
     const [updateMode, setUpdateMode] = useState(_updateMode)
     const [currentLesson, setCurrentLesson] = useState(null)
-    const [lessonType, setLessonType] = useState('mcq')
+    const [lessonType, setLessonType] = useState(null)
     const [currentLessonLoading, setCurrentLessonLoading] = useState(false)
 
     useEffect(() => {
         if (updateMode && id) {
             setCurrentLessonLoading(true)
             lesson.getById(id, ['image']).then(res => {
+                console.log("Downloaded lesson", res.response.data)
                 setCurrentLesson(res.response.data)
                 setCurrentLessonLoading(false)
             })
@@ -31,6 +32,7 @@ function CreateAndUpdateLesson(props) {
     }, [updateMode])
 
     useEffect(() => {
+      console.log("Current lesson final state", currentLesson)
       if (currentLesson) {
         setLessonType(currentLesson.type)
       }
@@ -55,11 +57,21 @@ function CreateAndUpdateLesson(props) {
     ]
   return <Box>
     <Loader isLoading={currentLessonLoading}>
-      {(!updateMode || currentLesson) && <TabNavigator 
+      {
+        !updateMode ? <TabNavigator 
+          tabs={tabs} 
+          currentTab={'mcq'}
+          setCurrentTab={setLessonType}
+        /> : <>
+          {currentLesson && lessonType === 'mcq' && <CreateOrUpdateMCQ lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} /> }
+          {currentLesson && lessonType === 'dnd' && <CreateOrUpdateDnD lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} /> }
+        </>
+      }
+      {/* {(!updateMode || (currentLesson && lessonType)) && <TabNavigator 
         tabs={tabs} 
-        currentTab={lessonType}
+        currentTab={lessonType ?? 'mcq'}
         setCurrentTab={setLessonType}
-      />}
+      />} */}
     </Loader>
   </Box>
 }

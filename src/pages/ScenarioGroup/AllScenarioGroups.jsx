@@ -11,6 +11,7 @@ import ConfirmationPopup from '../../components/ConfirmationPopup'
 import AlertDialog from '../../components/AlertDialog'
 import ScenarioGroups from '../../firebase/scenario_groups'
 import ManageScenarioGroup from './ManageScenarioGroup'
+import ManageTrainingAssignment from './ManageTrainingAssignment'
 
 function AllScenarioGroups() {
     const scenario_group = new ScenarioGroups()
@@ -28,6 +29,8 @@ function AllScenarioGroups() {
     const [deleteAlertDialogOpen, setDeleteAlertDialogOpen] = React.useState(false)
     const [openManage, setOpenManage] = React.useState(false)
     const [manageSceneGroupId, setManageSceneGroupId] = React.useState(null)
+    const [openAssignTrainingDialog, setOpenAssignTrainingDialog] = React.useState(false)
+    
     React.useEffect(() => {
         setLoading(true)
         scenario_group.get().then((res) => {
@@ -123,6 +126,10 @@ function AllScenarioGroups() {
         setManageSceneGroupId(id)
         setOpenManage(true)
     }
+    const handleOpenAssignTrainingManager = (id) => {
+        setManageSceneGroupId(id)
+        setOpenAssignTrainingDialog(true)
+    }
     const columns = [
         {
             id: "name",
@@ -154,7 +161,21 @@ function AllScenarioGroups() {
                 <Button 
                     onClick={() => handleOpenSceneGroupManager(rowData.id)}
                     variant='contained' color="secondary" startIcon={<SettingsIcon />}
-                >Manage
+                >
+                    Manage
+                </Button>
+            )
+        },
+        {
+            id: "assignTraining",
+            label: "Assign Training",
+            render: (rowData) => (
+                <Button 
+                    onClick={() => handleOpenAssignTrainingManager(rowData.id)}
+                    variant='contained' color="secondary" startIcon={<SettingsIcon />}
+                    
+                >
+                    Assign Training
                 </Button>
             )
         },
@@ -196,6 +217,11 @@ function AllScenarioGroups() {
             setOpen={setOpenManage}
             groupId={manageSceneGroupId}
         />}
+        <ManageTrainingAssignment 
+            open={openAssignTrainingDialog}
+            setOpen={setOpenAssignTrainingDialog}
+            groupId={manageSceneGroupId}
+        />
     </>
   )
 }

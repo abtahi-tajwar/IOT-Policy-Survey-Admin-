@@ -22,6 +22,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
+import { Settings } from "@mui/icons-material";
+import ManageTraining from "./ManageTraining";
 
 function Training() {
   const training = new TrainingClass();
@@ -48,6 +50,12 @@ function Training() {
     name: null
   })
   const [editTrainingLoading, setEditTrainingLoading] = React.useState(false)
+  const [manageTrainingOpen, setManageTrainingOpen] = React.useState(false)
+  const [manageTrainingData, setManageTrainingData] = React.useState(null)
+  const [manageTrainingDialog, setManageTrainingDialog] = React.useState({
+    open: false,
+    data: null
+  })
   
   React.useEffect(() => {
     setLoading(true);
@@ -89,7 +97,7 @@ function Training() {
     if (response) {
       trainings.filter((s) => s.id !== currentDeleteScene.id);
       training
-        .delete(currentDeleteScene)
+        .delete(currentDeleteScene.id)
         .then((res) => {
           training.getAll().then((res) => {
             setTrainings(res.response);
@@ -110,7 +118,7 @@ function Training() {
         .catch((e) => {
           setConfirmationPopup({
             show: true,
-            error: false,
+            error: true,
             text: `Failed to delete Scene ${currentDeleteScene.data.name}`,
           });
         });
@@ -131,7 +139,7 @@ function Training() {
           setCreateNewTrainingLoading(false);
           setConfirmationPopup({
             show: true,
-            error: true,
+            error: false,
             text: `New Training Successfully Created`,
           });
         });
@@ -182,6 +190,27 @@ function Training() {
       id: "name",
       label: "Training name",
       nameCol: true,
+    },
+    {
+      id: "includeLesson",
+      label: "Include Lesson",
+      render: (rowData) => (
+        <Button 
+          variant="contained" 
+          startIcon={<Settings />}
+          onClick={() => {
+            setManageTrainingDialog({
+              open: true,
+              data: {
+                id: rowData.id,
+                name: rowData.name
+              }
+            })
+          }}
+        >
+          Manage
+        </Button>
+      )
     },
     {
       id: "action",
@@ -304,6 +333,12 @@ function Training() {
           <Button onClick={() => setEditDialogOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
+
+      <ManageTraining 
+        open={manageTrainingDialog.open}
+        setOpen={(isOpen) => setManageTrainingDialog(prevState => ({ ...prevState, open: isOpen }))}
+        trainingData={manageTrainingDialog.data}
+      />
     </>
   );
 }
