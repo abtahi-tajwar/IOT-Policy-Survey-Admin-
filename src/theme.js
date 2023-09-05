@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles';
+import { blueGrey } from '@mui/material/colors';
 
 export const theme = createTheme({
     palette: {
@@ -22,6 +23,11 @@ export const theme = createTheme({
       },
       action: {
         danger: "#FF6D6D"
+      }
+    },
+    typography: {
+      light: {
+        color: blueGrey[600]
       }
     },
     components: {

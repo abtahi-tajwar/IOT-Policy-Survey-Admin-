@@ -101,25 +101,23 @@ export default class Operations {
           response: e
         })
       }
-      
-      
     })
-    
-
   }
   getById(id, fileDataKeys = []) {
     return new Promise(async (resolve, reject) => {
       const docRef = doc(this.db, this.collectionName, id);
       try {
         const docSnap = await getDoc(docRef);
+        if (!docSnap.data()) resolve({ success: true, response: null })
         const response = {
             id: docSnap.id,
             data: docSnap.data(),
         }
-        for(let i = 0; i < fileDataKeys.length; i++) {
-            const file = await this.downloadFile(response.data[fileDataKeys[i]])
-            response.data[fileDataKeys[i]] = file
-        }
+        // for(let i = 0; i < fileDataKeys.length; i++) {
+        //     const file = await this.downloadFile(response.data[fileDataKeys[i]])
+        //     response.data[fileDataKeys[i]] = file
+        // }
+        response.data = await this.iterateAndDownload(response.data, fileDataKeys)
         resolve({
           success: true,
           response,
@@ -133,20 +131,25 @@ export default class Operations {
     });
   }
   create(data) {
+    this.iterateAndUpload(data).then(res => {
+      console.log("Final data after upload", res)
+    })
     return new Promise(async (resolve, reject) => {
 
       // Upload all the files seperately
-      const _object_keys = Object.keys(data);
-      for (let i = 0; i < _object_keys.length; i++) {
-        const _inputObj = data[_object_keys[i]];
-        if (_inputObj.type === "file") {
-          const uploadResponse = await this.uploadFile(_inputObj.file, "scene");
-          data[_object_keys[i]] = uploadResponse.filePath;
-        }
-      }
+      // const _object_keys = Object.keys(data);
+      // for (let i = 0; i < _object_keys.length; i++) {
+      //   const _inputObj = data[_object_keys[i]];
+      //   if (_inputObj.type === "file") {
+      //     const uploadResponse = await this.uploadFile(_inputObj.file, this.collectionName, this.collectionName+"/");
+      //     data[_object_keys[i]] = uploadResponse.filePath;
+      //   }
+      // }
       // Add a new document with a generated id.
       try {
-        const docRef = await addDoc(this.collectionRef, data);
+        // Upload all the files seperately
+        const modifiedData = await this.iterateAndUpload(data)
+        const docRef = await addDoc(this.collectionRef, modifiedData);
         resolve({
           success: true,
           doc: docRef,
@@ -162,22 +165,21 @@ export default class Operations {
   update(id, data) {
     return new Promise(async (resolve, reject) => {
       const docRef = doc(this.db, this.collectionName, id);
-      const _object_keys = Object.keys(data);
-
+      // const _object_keys = Object.keys(data);
       // Upload all the files seperately
-      for (let i = 0; i < _object_keys.length; i++) {
-        const _inputObj = data[_object_keys[i]];
-        if (_inputObj.type === "file") {
-          if ("previous" in _inputObj) {
-            await deleteObject(ref(this.storage, _inputObj.previous))
-          }
-          const uploadResponse = await this.uploadFile(_inputObj.file, "scene");
-          data[_object_keys[i]] = uploadResponse.filePath;
-        }
-      }
-
+      // for (let i = 0; i < _object_keys.length; i++) {
+      //   const _inputObj = data[_object_keys[i]];
+      //   if (_inputObj.type === "file") {
+      //     if ("previous" in _inputObj) {
+      //       await deleteObject(ref(this.storage, _inputObj.previous))
+      //     }
+      //     const uploadResponse = await this.uploadFile(_inputObj.file, "scene");
+      //     data[_object_keys[i]] = uploadResponse.filePath;
+      //   }
+      // }
       try {
-        const res = await updateDoc(docRef, data);
+        const modifiedData = await this.iterateAndUpload(data)
+        const res = await updateDoc(docRef, modifiedData);
         resolve({
           success: true,
           response: res,
@@ -214,7 +216,7 @@ export default class Operations {
     return new Promise(async (resolve, reject) => {
       // Create a root reference
       const storage = getStorage();
-      const extension = file.name.split(".")[file.name.split(".").length-1]
+      const extension = file.name ? file.name.split(".")[file.name.split(".").length-1] : ''
       // Create a reference to 'mountains.jpg'
       const filePath = `${destinationFolder}${fileNamePrefix}_${new Date().getTime()}.${extension}`;
       const storageRef = ref(storage, filePath);
@@ -232,6 +234,33 @@ export default class Operations {
         });
       }
     });
+  }
+  iterateAndUpload (data) {
+    return new Promise(async (resolve, reject) => {
+      if (data instanceof File || data instanceof Blob) {
+          try {
+            const uploadResponse = await this.uploadFile(data.file ?? data, this.collectionName, this.collectionName+"/")
+            resolve(uploadResponse.filePath)
+          } catch (e) {
+            reject(e)
+          }
+      } else if (data instanceof Array) {
+        const _newArr = []
+        for (const item of data) {
+          _newArr.push(await this.iterateAndUpload(item))
+        }
+        resolve(_newArr)
+      } else if (data instanceof Object) {
+        const newObj = {}
+        for (const key of Object.keys(data)) {
+          newObj[key] = await this.iterateAndUpload(data[key])
+        }
+        resolve(newObj)
+      } else {
+        resolve(data)
+      }
+    })
+    
   }
   downloadFile(url) {
     return (
@@ -254,6 +283,36 @@ export default class Operations {
         }
       })
     );
+  }
+  iterateAndDownload (data, fileDataKeys = []) {
+    return new Promise(async (resolve, reject) => {
+      if (data instanceof Array) {
+        const _newArr = []
+        for (const item of data) {
+          _newArr.push(await this.iterateAndDownload(item, fileDataKeys))
+        }
+        resolve(_newArr)
+      } else if (data instanceof Object) {
+        const newObj = {}
+        for (const key of Object.keys(data)) {
+          if (fileDataKeys.includes(key)) {
+            console.log("Image should be download", key, data[key])
+            try {
+              const file = await this.downloadFile(data[key])
+              newObj[key] = file
+            } catch (e) {
+              newObj[key] = ''
+            }
+          } else {
+            newObj[key] = await this.iterateAndDownload(data[key], fileDataKeys)
+          }
+        }
+        resolve(newObj)
+      } else {
+        resolve(data)
+      }
+    })
+    
   }
   _createPaginatedQuery(lim, queryParams) {
     let q = null

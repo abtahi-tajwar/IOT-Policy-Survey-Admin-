@@ -1,21 +1,17 @@
 import React from 'react'
-import BasicTable from '../../components/BasicTable'
-import Loader from '../../components/Loader'
-import Scenario from '../../firebase/scenarios'
-import { Button, IconButton, Switch } from '@mui/material'
+import BasicTable from '../../../components/BasicTable'
+import Loader from '../../../components/Loader'
+import Lesson from '../../../firebase/Lesson'
+import { IconButton, Switch } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { Link } from 'react-router-dom'
-import ConfirmationPopup from '../../components/ConfirmationPopup'
-import AlertDialog from '../../components/AlertDialog'
-import ScenarioGroups from '../../firebase/scenario_groups'
-import ManageScenarioGroup from './ManageScenarioGroup'
-import ManageTrainingAssignment from './ManageTrainingAssignment'
+import ConfirmationPopup from '../../../components/ConfirmationPopup'
+import AlertDialog from '../../../components/AlertDialog'
 
-function AllScenarioGroups() {
-    const scenario_group = new ScenarioGroups()
-    const [scenesTableData, setScenesTableData] = React.useState([])
+function AllLessons() {
+    const lesson = new Lesson()
+    const [lessonsTableData, setLessonsTableData] = React.useState([])
     const [scenes, setScenes] = React.useState([])
     const [loading, setLoading] = React.useState(true)
     const [isLastPage, setIsLastPage] = React.useState(false);
@@ -27,13 +23,9 @@ function AllScenarioGroups() {
     })
     const [currentDeleteScene, setCurrentDeleteScene] = React.useState(null)
     const [deleteAlertDialogOpen, setDeleteAlertDialogOpen] = React.useState(false)
-    const [openManage, setOpenManage] = React.useState(false)
-    const [manageSceneGroupId, setManageSceneGroupId] = React.useState(null)
-    const [openAssignTrainingDialog, setOpenAssignTrainingDialog] = React.useState(false)
-    
     React.useEffect(() => {
         setLoading(true)
-        scenario_group.get().then((res) => {
+        lesson.get().then((res) => {
             setScenes(res.response)
             updateTableRowData(res.response)
             setIsLastPage(res.isLastPage)
@@ -45,17 +37,15 @@ function AllScenarioGroups() {
     }, [scenes])
 
     const updateTableRowData = (sceneData) => {
-        setScenesTableData(sceneData.map(item => ({
+        setLessonsTableData(sceneData.map(item => ({
             id: item.id,
             name: item.data.name,
-            active: item.data.active,
-            totalAssignedUsers: item.data.totalAssignedUsers,
-            totalScenes: item.data.scenarios ? item.data.scenarios.length : 0
+            type: item.data.type
         })))
     }
     const loadMore = () => {
         setLoadMoreLoading(true)
-        scenario_group.get().then((res) => {
+        lesson.get().then((res) => {
             setScenes(res.response)
             updateTableRowData(res.response)
             setIsLastPage(res.isLastPage)
@@ -85,7 +75,7 @@ function AllScenarioGroups() {
             }
             return scene
         }))
-        scenario_group.update(id, _updatedScene).then(res => {
+        lesson.update(id, _updatedScene).then(res => {
             setConfirmationPopup({
                 show: true,
                 error: false,
@@ -106,8 +96,8 @@ function AllScenarioGroups() {
     }
     const handleDelete = (response) => {
         if (response) {
-            setScenes(scenes.filter(s => s.id !== currentDeleteScene.id))
-            scenario_group.delete(currentDeleteScene).then(res => {
+            scenes.filter(s => s.id !== currentDeleteScene.id)
+            lesson.delete(currentDeleteScene).then(res => {
                 setConfirmationPopup({
                     show: true,
                     error: false,
@@ -122,69 +112,22 @@ function AllScenarioGroups() {
             })
         }
     }
-    const handleOpenSceneGroupManager = (id) => {
-        setManageSceneGroupId(id)
-        setOpenManage(true)
-    }
-    const handleOpenAssignTrainingManager = (id) => {
-        setManageSceneGroupId(id)
-        setOpenAssignTrainingDialog(true)
-    }
     const columns = [
         {
             id: "name",
-            label: "Scenario Group name",
+            label: "Name",
             nameCol: true
         },
         {
-            id: "totalAssignedUsers",
-            label: "Total Assigned User"
-        },
-        {
-            id: "totalScenes",
-            label: "Total Scenes"
-        },
-        {
-            id: "active",
-            label: "Active",
-            render: (rowData) => (
-                <Switch 
-                    checked={rowData.active} 
-                    onChange={() => handleScenarioStatusChange(rowData.id, rowData.active)}
-                />
-            )
-        },
-        {
-            id: "assignScene",
-            label: "Assign Scene",
-            render: (rowData) => (
-                <Button 
-                    onClick={() => handleOpenSceneGroupManager(rowData.id)}
-                    variant='contained' color="secondary" startIcon={<SettingsIcon />}
-                >
-                    Manage
-                </Button>
-            )
-        },
-        {
-            id: "assignTraining",
-            label: "Assign Training",
-            render: (rowData) => (
-                <Button 
-                    onClick={() => handleOpenAssignTrainingManager(rowData.id)}
-                    variant='contained' color="secondary" startIcon={<SettingsIcon />}
-                    
-                >
-                    Assign Training
-                </Button>
-            )
+            id: "type",
+            label: "Type"
         },
         {
             id: 'action',
             label: "Action",
             render: (rowData) => (
                 <div className="action-container">
-                    <IconButton color="primary" LinkComponent={Link} to={`/scenario_group/edit/${rowData.id}`}><EditIcon /></IconButton>
+                    <IconButton color="primary" LinkComponent={Link} to={`/lesson/edit/${rowData.id}`}><EditIcon /></IconButton>
                     <IconButton color="danger" onClick={() => handleDeleteClick(rowData.id)}><DeleteIcon /></IconButton>
                 </div>
             )
@@ -196,7 +139,7 @@ function AllScenarioGroups() {
             <Loader isLoading={loading}>
                 <BasicTable 
                     columns={columns}
-                    data={scenesTableData}
+                    data={lessonsTableData}
                     isLastPage={isLastPage}
                     loadMoreLoading={loadMoreLoading}
                     loadMore={loadMore}
@@ -212,18 +155,8 @@ function AllScenarioGroups() {
             description={`Are you sure you want to delete scene ${currentDeleteScene.data.name}?`}
             onResponse={handleDelete}
         />}
-        {openManage && <ManageScenarioGroup 
-            open={openManage}
-            setOpen={setOpenManage}
-            groupId={manageSceneGroupId}
-        />}
-        <ManageTrainingAssignment 
-            open={openAssignTrainingDialog}
-            setOpen={setOpenAssignTrainingDialog}
-            groupId={manageSceneGroupId}
-        />
     </>
   )
 }
 
-export default AllScenarioGroups
+export default AllLessons
