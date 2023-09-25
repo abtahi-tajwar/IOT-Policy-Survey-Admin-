@@ -6,6 +6,7 @@ import CreateOrUpdateMCQ from './MCQ/CreateOrUpdateMCQ'
 import CreateOrUpdateDnD from './DnD/CreateOrUpdateDnD'
 import TabNavigator from '../../../components/TabNavigator'
 import Loader from '../../../components/Loader'
+import CreateOrUpdateDemographics from './Demographics/CreateOrUpdateDemographics'
 
 function CreateAndUpdateLesson(props) {
     const lesson = new Lesson()
@@ -53,6 +54,11 @@ function CreateAndUpdateLesson(props) {
         value: "dnd",
         label: "DND (Drag & Drop Blanks)",
         body: <CreateOrUpdateDnD lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} />
+      },
+      {
+        value: "demographics",
+        label: "Demographics",
+        body: <CreateOrUpdateDemographics lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} />
       }
     ]
   return <Box>
@@ -65,6 +71,7 @@ function CreateAndUpdateLesson(props) {
         /> : <>
           {currentLesson && lessonType === 'mcq' && <CreateOrUpdateMCQ lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} /> }
           {currentLesson && lessonType === 'dnd' && <CreateOrUpdateDnD lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} /> }
+          {currentLesson && lessonType === 'demographics' && <CreateOrUpdateDemographics lessonId={id} currentLesson={currentLesson} setCurrentLesson={setCurrentLesson} updateMode={updateMode} /> }
         </>
       }
       {/* {(!updateMode || (currentLesson && lessonType)) && <TabNavigator 
