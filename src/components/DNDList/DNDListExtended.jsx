@@ -34,6 +34,7 @@ const DNDListExtended = ({ cards, setCards }) => {
                 moveCard={moveCard}
                 onClick={() => handleClick(index, card)}
                 style={{ flex: 1 }}
+                extended
             />
             {card.action}
         </Wrapper>

@@ -2,15 +2,21 @@ import { useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 // import { ItemTypes } from './ItemTypes.js'
 const cardStyle = {
-  // border: '1px dashed #989898',
-  // borderRadius: '5px',
-  // boxShadow: '3px 2px 2px 0px rgba(0,0,0,0.27)',
+  border: '1px dashed #989898',
+  borderRadius: '5px',
+  boxShadow: '3px 2px 2px 0px rgba(0,0,0,0.27)',
   padding: '0.5rem 1rem',
   marginBottom: '.5rem',
   backgroundColor: 'white',
   cursor: 'move',
 }
-export const Card = ({ id, text, index, moveCard, style, ...props }) => {
+const extendedCardStyle = {
+  padding: '0.5rem 1rem',
+  marginBottom: '.5rem',
+  backgroundColor: 'white',
+  cursor: 'move',
+}
+export const Card = ({ id, text, index, moveCard, style, extended, ...props }) => {
   const ref = useRef(null)
   const [{ handlerId }, drop] = useDrop({
     accept: 'card',
@@ -70,7 +76,7 @@ export const Card = ({ id, text, index, moveCard, style, ...props }) => {
   const opacity = isDragging ? 0 : 1
   drag(drop(ref))
   return (
-    <div ref={ref} style={{ ...cardStyle, ...style, opacity }} data-handler-id={handlerId} {...props}>
+    <div ref={ref} style={{ ...(extended ? extendedCardStyle : cardStyle), ...style, opacity }} data-handler-id={handlerId} {...props}>
       {text}
     </div>
   )
