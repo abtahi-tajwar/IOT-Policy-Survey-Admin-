@@ -49,7 +49,9 @@ function ResponsesTable({ data }) {
                     <h2>{currentResponse.sceneName}</h2>
                     <p><i>Time Take: {currentResponse.timeRequired}</i></p>
                     <p><b>Candidate: </b>{currentResponse.userId}</p>
-                    <p><b>Answer: </b> {currentResponse.answer}</p>
+                    <p><b>Policy: </b> {currentResponse.answer}</p>
+                    <p><b>Scenario Allowed By Policy: </b> {currentResponse.extraResponse?.allowedScenario}</p>
+                    <p><b>Scenario Denied By Policy: </b> {currentResponse.extraResponse?.deniedScenario}</p>
                 </>
             )}
         </BasicDialog>
