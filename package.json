@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "netlify-dev": "netlify dev"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -28,6 +29,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
+    "netlify-cli": "^16.4.2",
     "vite": "^4.2.0"
   }
 }
