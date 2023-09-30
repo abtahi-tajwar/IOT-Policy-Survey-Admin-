@@ -22,7 +22,11 @@ function CandidateResponses() {
                 timeRequired: millisecondToTime(item.data.timeRequired),
                 answer: item.data.answer,
                 sceneName: item.data.sceneName,
-                sceneId: item.data.sceneId
+                sceneId: item.data.sceneId,
+                ...(item.data.extraResponse && {extraResponse: {
+                    allowedScenario: item.data.extraResponse.allowedScenario,
+                    deniedScenario: item.data.extraResponse.deniedScenario
+                }})
             })))
             setLoading(false)
         })

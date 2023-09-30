@@ -10,6 +10,7 @@ import Loader from "../../components/Loader";
 import Lesson from "../../firebase/Lesson";
 import Training from "../../firebase/Training";
 import ConfirmationPopup from "../../components/ConfirmationPopup";
+import DNDListExtended from "../../components/DNDList/DNDListExtended";
 
 function ManageTraining({ open, setOpen, trainingData }) {
   const lesson = new Lesson();
@@ -23,10 +24,37 @@ function ManageTraining({ open, setOpen, trainingData }) {
     error: false,
     text: "",
   });
+  const [includedLesssonsDnD, setIncludedLessonsDnD] = React.useState([]);
 
   React.useEffect(() => {
     initializeLessonData(trainingData);
   }, [trainingData]);
+
+  React.useEffect(() => {
+    setIncludedLessonsDnD(
+      includededLessons.map((il) => ({
+        id: il.id,
+        body: (
+          <div>
+            <span>{il.data.name}</span> <br />
+            <span className="id_label">{il.id}</span>
+          </div>
+        ),
+        action: (
+          <Button
+            variant="contained"
+            size="small"
+            color="error"
+            onClick={() =>
+              handleUnincludeLesson(trainingData.id, il.id, trainingData.name)
+            }
+          >
+            Uninclude
+          </Button>
+        ),
+      }))
+    );
+  }, [includededLessons]);
 
   const initializeLessonData = (trainingData) => {
     if (trainingData) {
@@ -34,10 +62,9 @@ function ManageTraining({ open, setOpen, trainingData }) {
       training.getById(trainingData.id).then((trainingRes) => {
         lesson.getAll().then((lessonsRes) => {
           const includedLessons = trainingRes.response.data.lessons;
-          console.log("Lessons response", lessonsRes);
-          console.log("Training Response", trainingRes)
           let _unincludedLessons = [];
           let _includedLessons = [];
+          let _includedLessonsOrdered = [];
           if (includedLessons) {
             lessonsRes.response.forEach((ls) => {
               if (!includedLessons.some((item) => item.id === ls.id)) {
@@ -47,10 +74,15 @@ function ManageTraining({ open, setOpen, trainingData }) {
               }
             });
           } else {
-            _unincludedLessons = lessonsRes.response
+            _unincludedLessons = lessonsRes.response;
           }
+
+          trainingRes.response.data.lessonIds.forEach(l_id => {
+            _includedLessonsOrdered.push(_includedLessons.find(ils => ils.id === l_id))
+          })
+
           setUnincludedLessons(_unincludedLessons);
-          setIncludedLessons(_includedLessons);
+          setIncludedLessons(_includedLessonsOrdered);
           setLoading(false);
         });
       });
@@ -90,6 +122,24 @@ function ManageTraining({ open, setOpen, trainingData }) {
       });
   };
 
+  const updateAssignedLessonsOrder = (trainingId, orderedLessonsDnDState) => {
+    const orderedLessons = orderedLessonsDnDState.map(old => old.id)
+    setLoading(true);
+    training.update(trainingId, {
+      lessonIds: orderedLessons
+    }).then(res => {
+      initializeLessonData(trainingData);
+    }).catch(e => {
+      console.log("Failed to update lesson ordering", e);
+      setConfirmationPopup({
+        show: true,
+        error: true,
+        text: "Failed to update lesson ordering!",
+      });
+      setLoading(false);
+    })
+  }
+
   return (
     <>
       <Modal
@@ -104,7 +154,13 @@ function ManageTraining({ open, setOpen, trainingData }) {
               <section>
                 <div className="group">
                   <label className="group_label">Included Lessons</label>
-                  <ul className="scene_list">
+                  <Box sx={{ mt: 2 }}>
+                    <DNDListExtended 
+                      cards={includedLesssonsDnD}
+                      setCards={setIncludedLessonsDnD}
+                    />
+                  </Box>
+                  {/* <ul className="scene_list">
                     {includededLessons.map((ls) => (
                       <li>
                         <div>
@@ -127,7 +183,7 @@ function ManageTraining({ open, setOpen, trainingData }) {
                         </Button>
                       </li>
                     ))}
-                  </ul>
+                  </ul> */}
                 </div>
               </section>
               <section>
@@ -168,7 +224,10 @@ function ManageTraining({ open, setOpen, trainingData }) {
               </section>
             </ManageSceneGroupViewer>
           </Loader>
-          <Button variant="contained" color="secondary" onClick={handleClose}>
+          <Button variant="contained" color="primary" onClick={() => updateAssignedLessonsOrder(trainingData.id, includedLesssonsDnD)}>
+            Save Lesson Order
+          </Button>
+          <Button variant="outlined" color="primary" onClick={handleClose} sx={{ mx: 2 }}>
             Close
           </Button>
         </Box>

@@ -13,7 +13,7 @@ import Routes from "./Routes";
 import SignIn from "./pages/SignIn";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   return (
     <Router>
       <div className="App">

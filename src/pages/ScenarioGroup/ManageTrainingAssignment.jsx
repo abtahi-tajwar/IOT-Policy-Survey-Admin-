@@ -35,19 +35,24 @@ function ManageTrainingAssignment({ groupId, open, setOpen }) {
             try {
                 console.log("Scenario Group Get By Id", groupId)
                 const sceneGroupRes = (await scene_groups.getById(groupId)).response;
-                const trainingResponse = (
-                    await training.getById(sceneGroupRes.data.trainingId)
-                ).response;
-                console.log("Assigned The Trainings", trainingResponse)
-                setAssignedTraining(trainingResponse);
-                const allTrainingResponse = (await training.getAll()).response;
                 let _unassignedTrainings = []
-                if (trainingResponse) {  
-                  _unassignedTrainings = allTrainingResponse.filter(
-                      (atp) => atp.id !== trainingResponse.id
-                  );
+                let trainingResponse = null
+                if (sceneGroupRes.data.trainingId) {
+                  trainingResponse = (await training.getById(sceneGroupRes.data.trainingId)).response;
+                  console.log("Assigned The Trainings", trainingResponse)
+                  setAssignedTraining(trainingResponse);
+                  const allTrainingResponse = (await training.getAll()).response;
+                  if (trainingResponse) {  
+                    _unassignedTrainings = allTrainingResponse.filter(
+                        (atp) => atp.id !== trainingResponse.id
+                    );
+                  } else {
+                    _unassignedTrainings = allTrainingResponse
+                  }
                 } else {
+                  const allTrainingResponse = (await training.getAll()).response;
                   _unassignedTrainings = allTrainingResponse
+                  setAssignedTraining(null);
                 }
                 setUnassignedTrainings(_unassignedTrainings);
                 resolve({ trainingResponse, unassignedTrainings: _unassignedTrainings })

@@ -77,6 +77,22 @@ function ManageScenarioGroup({ groupId, open, setOpen }) {
       })
     })
   }
+  const handleSceneGroupUnassign = (sceneId) => {
+    const body = {
+      groupId: ''
+    }
+    scene.update(sceneId, body).then(res => {
+      setScenes(null)
+      setSceneGroups(null)
+      setSceneByGroup(null)
+      scene.get().then(res => {
+          setScenes(res.response)
+      })
+      scene_groups.get().then(res => {
+          setSceneGroups(res.response)
+      })
+    })
+  }
 
   React.useEffect(() => {
     console.log("Scene by group", sceneByGroup, scenes, sceneGroups)
@@ -103,6 +119,7 @@ function ManageScenarioGroup({ groupId, open, setOpen }) {
                         sceneByGroup[key].scenes.map(scene => 
                           <li>
                             <span>{scene.data.name}</span>
+                            <Button variant='contained' color="error" size='small' onClick={() => handleSceneGroupUnassign(scene.id)}>Unassign</Button>
                           </li>
                         )
                       }
