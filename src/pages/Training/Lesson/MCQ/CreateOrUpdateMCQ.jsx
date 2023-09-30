@@ -388,6 +388,16 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
                   <TextField 
                     placeholder="Answer Explanation"
                     multiline
+                    value={selectedQuestion.answer.explanation}
+                    onChange={(e) => setSelectedQuestion(prevState => (
+                      { 
+                        ...prevState, 
+                        answer: {
+                          ...prevState.answer,
+                          explanation: e.target.value,
+                        }
+                      }
+                    ))}
                   />
                 </Grid>
               </Grid>
@@ -454,6 +464,16 @@ function CreateOrUpdateMCQ({ lessonId, currentLesson, setCurrentLesson, updateMo
                   <TextField 
                     placeholder="Answer Explanation"
                     multiline
+                    value={newStagedQuestion.answer.explanation}
+                    onChange={(e) => setNewStagedQuestion(prevState => (
+                      { 
+                        ...prevState, 
+                        answer: {
+                          ...prevState.answer,
+                          explanation: e.target.value,
+                        }
+                      }
+                    ))}
                   />
                 </Grid>
               </Grid>
