@@ -109,7 +109,8 @@ function CreateOrUpdateDnD({ lessonId, currentLesson, setCurrentLesson, updateMo
   const [newStagedQuestion, setNewStagedQuestion] = useState({
     questionString: "",
     question: [],
-    answers: []
+    answers: [],
+    explanation: ""
   })
   const [isNewQuestionValid, setIsNewQuestionValid] = useState(false)
   const [addQuestionDialogOpen, setAddQuestionDialogOpen] = useState(false)
@@ -427,6 +428,17 @@ function CreateOrUpdateDnD({ lessonId, currentLesson, setCurrentLesson, updateMo
               }}
             />
 
+            <label><b>Answer Explanation</b></label>
+            <TextField 
+              placeholder="Answer Explanation..."
+              multiline
+              value={selectedQuestion.explanation ?? ""}
+              onChange={e => setSelectedQuestion(prevState => ({
+                ...prevState,
+                explanation: e.target.value
+              }))}
+            />
+
             <Button variant='contained' color="error" onClick={() => handleDeleteSelectedQuestion(selectedQuestionIndex)}>Delete This Blank</Button>
           </Card>
         </Grid> }
@@ -453,6 +465,16 @@ function CreateOrUpdateDnD({ lessonId, currentLesson, setCurrentLesson, updateMo
                 console.log("New array values", value)
                 setNewStagedQuestion(prevState => ({ ...prevState, answers: value }))
               }}
+            />
+            <label><b>Answer Explanation</b></label>
+            <TextField 
+              placeholder="Answer Explanation..."
+              multiline
+              value={newStagedQuestion.explanation}
+              onChange={e => setNewStagedQuestion(prevState => ({
+                ...prevState,
+                explanation: e.target.value
+              }))}
             />
         </DialogContent>
         <DialogActions>
