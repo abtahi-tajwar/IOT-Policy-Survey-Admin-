@@ -4,19 +4,27 @@ import { useParams } from 'react-router-dom';
 import ResponsesTable from './ResponsesTable';
 import Loader from '../../components/Loader';
 import { millisecondToTime } from '../../utils/helpers';
+import LessonResponse from '../../firebase/LessonResponses';
+import LessonResponsesTable from './LessonResponsesTable';
 
 function CandidateResponses() {
     const response = new Response();
+    const lessonResponse = new LessonResponse();
     const { id } = useParams();
-    const [loading, setLoading] = React.useState(true)
+    const [responsesLoading, setResponsesLoading] = React.useState(true)
+    const [lessonResponsesLoading, setLessonResponsesLoading] = React.useState(true)
     const [responses, setResponses] = React.useState();
-    const [tableData, setTableData] = React.useState([])
+    const [lessonResponses, setLessonResponses] = React.useState();
+    const [responseTableData, setResponseTableData] = React.useState([]);
+    const [lessonResponseTableData, setLessonResponseTableData] = React.useState([])
+
 
     React.useEffect(() => {
-        setLoading(true)
+        setResponsesLoading(true)
+        setLessonResponsesLoading(true)
         response.getResponsesOfCandidate(id).then(res => {
             setResponses(res.response)
-            setTableData(res.response.map(item => ({
+            setResponseTableData(res.response.map(item => ({
                 id: item.id,
                 userId: item.data.userId,
                 timeRequired: millisecondToTime(item.data.timeRequired),
@@ -28,16 +36,36 @@ function CandidateResponses() {
                     deniedScenario: item.data.extraResponse.deniedScenario
                 }})
             })))
-            setLoading(false)
+            setResponsesLoading(false)
+        })
+        lessonResponse.getLessonResponsesOfCandidate(id).then(res => {
+            setLessonResponses(res.response)
+            setLessonResponseTableData(res.response.map(item => ({
+                id: item.id,
+                candidateId: item.data.candidateId,
+                lessonType: item.data.lesson.type,
+                lessonId: item.data.lesson.id,
+                score: item.data.score,
+                total: item.data.total,
+                elapsedTime: item.data.elapsedTime ? millisecondToTime(item.data.elapsedTime) : 'N/A',
+                responses: item.data.responses
+            })))
+            setLessonResponsesLoading(false)
         })
     }, [])
+
     
     
   return (
     <div>
-        <Loader isLoading={loading}>
-            <h3>All Responses Of Candidate {id}</h3>
-            <ResponsesTable data={tableData} />
+        <h3>All Responses Of Candidate {id}</h3>
+        <Loader isLoading={responsesLoading}>
+            <ResponsesTable data={responseTableData} />
+        </Loader>
+        <br /><br />
+        <h3>All Lesson Responses Of Candidate {id}</h3>
+        <Loader isLoading={lessonResponsesLoading}>
+            <LessonResponsesTable data={lessonResponseTableData} />
         </Loader>
     </div>
   )
