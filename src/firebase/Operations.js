@@ -240,7 +240,8 @@ export default class Operations {
       if (data instanceof File || data instanceof Blob) {
           try {
             const uploadResponse = await this.uploadFile(data.file ?? data, this.collectionName, this.collectionName+"/")
-            resolve(uploadResponse.filePath)
+            const downloadUrl = await getDownloadURL(ref(this.storage, uploadResponse.filePath));
+            resolve(downloadUrl)
           } catch (e) {
             reject(e)
           }
