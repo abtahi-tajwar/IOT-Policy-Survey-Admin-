@@ -46,7 +46,8 @@ function CreateOrUpdateAttentionCheck({ lessonId, currentLesson, setCurrentLesso
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0)
   const [newStagedQuestion, setNewStagedQuestion] = useState({
     image: "",
-    question: ""
+    question: "",
+    answer: ""
   })
   const [isNewQuestionValid, setIsNewQuestionValid] = useState(false)
   const [addQuestionDialogOpen, setAddQuestionDialogOpen] = useState(false)
@@ -302,21 +303,21 @@ function CreateOrUpdateAttentionCheck({ lessonId, currentLesson, setCurrentLesso
       >
         <DialogTitle>Add New Question</DialogTitle>
         <DialogContent>
-            <TextField 
-              mlabel="Question"
-              value={newStagedQuestion.question}
-              onChange={(e) => setNewStagedQuestion(prevState => ({ ...prevState, question: e.target.value }))}
+          <TextField 
+            mlabel="Question"
+            value={newStagedQuestion.question}
+            onChange={(e) => setNewStagedQuestion(prevState => ({ ...prevState, question: e.target.value }))}
+          />
+          {/* Image Input */}
+          <Box sx={{ mt: 3 }}>
+            <label><b>Add Image</b></label>
+            <ImageCropUploader 
+              image={newStagedQuestion.image}
+              setImage={(image) => setNewStagedQuestion(prevState => ({ ...prevState, image }))}
+              type="banner"
+              aspectRatio={1.5}
             />
-            {/* Image Input */}
-            <Box sx={{ mt: 3 }}>
-              <label><b>Add Image</b></label>
-              <ImageCropUploader 
-                image={newStagedQuestion.image}
-                setImage={(image) => setNewStagedQuestion(prevState => ({ ...prevState, image }))}
-                type="banner"
-                aspectRatio={1.5}
-              />
-            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleSaveNewQuestion(newStagedQuestion)} disabled={!isNewQuestionValid}>Save</Button>
