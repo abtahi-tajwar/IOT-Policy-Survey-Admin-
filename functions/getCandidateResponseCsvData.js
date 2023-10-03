@@ -18,49 +18,52 @@ export const handler = async function (event, context) {
         const candidateId = userIdKey
         const lessonType = userResponse.data.lesson.type
         const lessonData = lessonsData.find(l => l.id === userResponse.data.lesson.id)
-        const lessonName = lessonData.data.name
+        const lessonName = lessonData?.data?.name ?? null
         userResponse.data.responses.forEach((response, ri) => {
             let score = null
             let totalScore = null
-            let question = ''
-            let responseString = ''
-            if (lessonType === 'mcq') {
-                const questionData = lessonData.data.questions[ri]
-                if (questionData) {
-                    question = questionData.question
-                    const answer = questionData.answer.index
-                    score = (answer === response) ? 1 : 0
-                    totalScore = 1
-                    responseString = questionData.options[response]
-                }
-            } else if (lessonType === 'dnd') {
-                const blankData = lessonData.data.blanks[ri]
-                if (blankData) {
-                    question = blankData.question.join(" ")
-                    totalScore = blankData.answers.length
-                    score = 0
-                    response['_'].forEach((part, pi) => {
-                        score += (part.answer === blankData.answers[pi]) ? 1 : 0
-                        responseString += part.answer+';'
-                    })
-                }
-            } else if (lessonType === 'demographics') {
-                const questionData = lessonData.data.questions[ri]
-                if (questionData) {
-                    question = questionData.question
-                    score = 'n/a'
-                    totalScore = 'n/a'
-                    responseString = questionData.options[response]
-                }
-            } else if (lessonType === 'attention_check') {
-                const questionData = lessonData.data.questions[ri]
-                if (questionData) {
-                    question = questionData.question
-                    score = 'n/a'
-                    totalScore = 'n/a'
-                    responseString = response
-                }
-            } 
+            let question = null
+            let responseString = null
+
+            if (lessonData) {
+              if (lessonType === 'mcq') {
+                  const questionData = lessonData.data.questions[ri]
+                  if (questionData) {
+                      question = questionData.question
+                      const answer = questionData.answer.index
+                      score = (answer === response) ? 1 : 0
+                      totalScore = 1
+                      responseString = questionData.options[response]
+                  }
+              } else if (lessonType === 'dnd') {
+                  const blankData = lessonData.data.blanks[ri]
+                  if (blankData) {
+                      question = blankData.question.join(" ")
+                      totalScore = blankData.answers.length
+                      score = 0
+                      response['_'].forEach((part, pi) => {
+                          score += (part.answer === blankData.answers[pi]) ? 1 : 0
+                          responseString += part.answer+';'
+                      })
+                  }
+              } else if (lessonType === 'demographics') {
+                  const questionData = lessonData.data.questions[ri]
+                  if (questionData) {
+                      question = questionData.question
+                      score = 'n/a'
+                      totalScore = 'n/a'
+                      responseString = questionData.options[response]
+                  }
+              } else if (lessonType === 'attention_check') {
+                  const questionData = lessonData.data.questions[ri]
+                  if (questionData) {
+                      question = questionData.question
+                      score = 'n/a'
+                      totalScore = 'n/a'
+                      responseString = response
+                  }
+              } 
+            }
 
             csvData.push([ candidateId, lessonType, score, totalScore, lessonName, responseString, question ])
         })

@@ -7,7 +7,7 @@ import CreateOrUpdateDnD from './DnD/CreateOrUpdateDnD'
 import TabNavigator from '../../../components/TabNavigator'
 import Loader from '../../../components/Loader'
 import CreateOrUpdateDemographics from './Demographics/CreateOrUpdateDemographics'
-import CreateOrUpdateAttentionCheck from './AttentionCheck/AttentionCheck'
+import CreateOrUpdateAttentionCheck from './AttentionCheck/CreateOrUpdateAttentionCheck'
 
 function CreateAndUpdateLesson(props) {
     const lesson = new Lesson()

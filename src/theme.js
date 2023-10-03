@@ -19,7 +19,7 @@ export const theme = createTheme({
         disabled: "#f2f2f2"
       },
       danger: {
-        main: "#FF6D6D",
+        main: "#F32013",
       },
       action: {
         danger: "#FF6D6D"
