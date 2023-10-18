@@ -24,6 +24,12 @@ function ManageTraining({ open, setOpen, trainingData }) {
     error: false,
     text: "",
   });
+  /**
+   * [{
+   *  id: string,
+   *  body: JSX
+   * }]
+   */
   const [includedLesssonsDnD, setIncludedLessonsDnD] = React.useState([]);
 
   React.useEffect(() => {
