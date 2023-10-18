@@ -76,10 +76,11 @@ function ManageTraining({ open, setOpen, trainingData }) {
           } else {
             _unincludedLessons = lessonsRes.response;
           }
-
-          trainingRes.response.data.lessonIds.forEach(l_id => {
-            _includedLessonsOrdered.push(_includedLessons.find(ils => ils.id === l_id))
-          })
+          if (trainingRes.response.data.lessonIds) {
+            trainingRes.response.data.lessonIds.forEach(l_id => {
+              _includedLessonsOrdered.push(_includedLessons.find(ils => ils.id === l_id))
+            })
+          } 
 
           setUnincludedLessons(_unincludedLessons);
           setIncludedLessons(_includedLessonsOrdered);
