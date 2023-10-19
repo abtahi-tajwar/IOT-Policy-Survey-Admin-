@@ -127,7 +127,7 @@ function ManageScenarioGroup({ groupId, open, setOpen }) {
     //   });
     // });
     setLoading(true)
-    scene_groups.assignTraining(groupId, sceneId).then((res) => {
+    scene_groups.assignScene(groupId, sceneId).then((res) => {
       setScenes(null);
       setSceneGroups(null);
       setSceneByGroup(null);
@@ -155,7 +155,7 @@ function ManageScenarioGroup({ groupId, open, setOpen }) {
     //   });
     // });
     setLoading(true)
-    scene_groups.unassignTraining(groupId, sceneId).then((res) => {
+    scene_groups.unassignScene(groupId, sceneId).then((res) => {
       setScenes(null);
       setSceneGroups(null);
       setSceneByGroup(null);
