@@ -5,20 +5,33 @@ export default class ScenarioGroups extends Operations {
   constructor() {
     super("scenario_groups");
   }
-  // assignTraining(scenarioGroupId, trainingId) {
-  //     return new Promise(async (resolve, reject) => {
-  //         try {
-  //             const updateRes = await super.update(scenarioGroupId, {
-  //                 trainingId
-  //             })
-  //             resolve(updateRes)
-  //         } catch (error) {
-  //             console.log("Failed to assign training", error)
-  //             reject(error)
-  //         }
-  //     })
-  // }
-  assignTraining(scenarioGroupId, scenarioId) {
+  assignTraining(scenarioGroupId, trainingId) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const updateRes = await super.update(scenarioGroupId, {
+          trainingId,
+        });
+        resolve(updateRes);
+      } catch (error) {
+        console.log("Failed to assign training", error);
+        reject(error);
+      }
+    });
+  }
+  unassignTraining(scenarioGroupId) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const updateRes = await super.update(scenarioGroupId, {
+          trainingId: "",
+        });
+        resolve(updateRes);
+      } catch (error) {
+        console.log("Failed to unassign training", error);
+        reject(error);
+      }
+    });
+  }
+  assignScene(scenarioGroupId, scenarioId) {
     return new Promise(async (resolve, reject) => {
       const scenarioGroupUpdateResponse = new Promise(
         async (resolve, reject) => {
@@ -41,6 +54,7 @@ export default class ScenarioGroups extends Operations {
             groupId: scenarioGroupId,
           };
           const response = scenario.update(scenarioId, body);
+          debugger;
           resolve(response);
         } catch (error) {
           reject(error);
@@ -49,8 +63,8 @@ export default class ScenarioGroups extends Operations {
 
       try {
         const response = await Promise.all([
-            scenarioGroupUpdateResponse,
-            scenarioUpdateResponse,
+          scenarioGroupUpdateResponse,
+          scenarioUpdateResponse,
         ]);
         resolve(response);
       } catch (error) {
@@ -58,44 +72,44 @@ export default class ScenarioGroups extends Operations {
       }
     });
   }
-  unassignTraining(scenarioGroupId, scenarioId) {
+  unassignScene(scenarioGroupId, scenarioId) {
     return new Promise(async (resolve, reject) => {
-        const scenarioGroupUpdateResponse = new Promise(
-          async (resolve, reject) => {
-            try {
-              const docRef = doc(this.db, this.collectionName, scenarioGroupId);
-              const response = await updateDoc(docRef, {
-                scenarios: arrayRemove(scenarioId),
-              });
-              resolve(response);
-            } catch (error) {
-              reject(error);
-            }
-          }
-        );
-  
-        const scenarioUpdateResponse = new Promise(async (resolve, reject) => {
+      const scenarioGroupUpdateResponse = new Promise(
+        async (resolve, reject) => {
           try {
-            const scenario = new Scenario();
-            const body = {
-              groupId: "",
-            };
-            const response = scenario.update(scenarioId, body);
+            const docRef = doc(this.db, this.collectionName, scenarioGroupId);
+            const response = await updateDoc(docRef, {
+              scenarios: arrayRemove(scenarioId),
+            });
             resolve(response);
           } catch (error) {
             reject(error);
           }
-        });
-  
+        }
+      );
+
+      const scenarioUpdateResponse = new Promise(async (resolve, reject) => {
         try {
-          const response = await Promise.all([
-              scenarioGroupUpdateResponse,
-              scenarioUpdateResponse,
-          ]);
+          const scenario = new Scenario();
+          const body = {
+            groupId: "",
+          };
+          const response = scenario.update(scenarioId, body);
           resolve(response);
         } catch (error) {
           reject(error);
         }
       });
+
+      try {
+        const response = await Promise.all([
+          scenarioGroupUpdateResponse,
+          scenarioUpdateResponse,
+        ]);
+        resolve(response);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }
